@@ -3,6 +3,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 
+import java.util.List;
+
 import static java.util.Arrays.*;
 
 public class EmployeePayrollServiceTest {
@@ -34,6 +36,12 @@ public class EmployeePayrollServiceTest {
         long entries = employeePayrollService.countEntries(EmployeePayrollService.IOService.FILE_IO);
         Assert.assertEquals(3, entries);
 
+    }
+
+    @Test
+    public void givenFileOnReadingFileShouldMatchEmployeeCount() {
+        EmployeePayrollService employeePayrollService = new EmployeePayrollService();
+        List<EmployeePayrollData> entries = employeePayrollService.readPayrollData(EmployeePayrollService.IOService.FILE_IO);
     }
 
 
