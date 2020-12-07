@@ -41,7 +41,7 @@ public class Java8WatchServiceExample {
         });
     }
 
-    /* Process all events for keys queued to the watcher */
+    // Process all events for keys queued to the watcher
     @SuppressWarnings("rawtypes")
     void processEvents() {
         while (true) {

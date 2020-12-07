@@ -8,7 +8,7 @@ import java.nio.file.Paths;
 public class Java8WatchServiceExampleTest {
     private static String HOME = System.getProperty("user.home");
     private static String PLAY_WITH_NIO = "TempPlayGround";
-
+    //
     @Test
     public void givenDirectoryWhenWatchedListsAllTheActivities() throws IOException {
         Path dir = Paths.get(HOME + "/" + PLAY_WITH_NIO);
