@@ -1,3 +1,4 @@
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -30,6 +31,8 @@ public class EmployeePayrollServiceTest {
         employeePayrollService = new EmployeePayrollService(asList(arrayOfEmps));
         employeePayrollService.writeEmployeePayrollData(EmployeePayrollService.IOService.FILE_IO);
         employeePayrollService.printData(EmployeePayrollService.IOService.FILE_IO);
+        long entries = employeePayrollService.countEntries(EmployeePayrollService.IOService.FILE_IO);
+        Assert.assertEquals(3, entries);
 
     }
 
