@@ -6,20 +6,25 @@ public class EmployeePayrollService {
 
     public enum IOService{CONSOLE_IO,FILE_IO,DB_IO,REST_IO}
 
+    private static EmployeePayrollDBService employeePayrollDBService;
+
+    public EmployeePayrollService(){
+        employeePayrollDBService = EmployeePayrollDBService.getInstance();
+    }
+
     /* Welcome Message */
     public void printWelcomeMessage() {
         System.out.println("Welcome to the Employee PayRoll Service Program");
     }
 
 
-    private static List<EmployeePayrollData> employeePayrollList;
+    private  static List<EmployeePayrollData> employeePayrollList;
 
     public EmployeePayrollService(List<EmployeePayrollData> employeePayrollList) {
+        this();
         this.employeePayrollList = employeePayrollList;
     }
 
-    public EmployeePayrollService() {
-    }
 
     public static void main(String[] args) {
         EmployeePayrollService employeePayrollService = new EmployeePayrollService(employeePayrollList);
@@ -39,10 +44,31 @@ public class EmployeePayrollService {
         employeePayrollList.add(new EmployeePayrollData(id, name, salary));
     }
 
+    /*read data from database*/
     public List<EmployeePayrollData> readEmployeePayrollData(IOService ioService) throws PayrollServiceException {
         if(ioService.equals(IOService.DB_IO))
-            this.employeePayrollList = new EmployeePayrollDBService().readData();
+            this.employeePayrollList = employeePayrollDBService.readData();
         return employeePayrollList;
+    }
+
+    public void upDateEmployeeSalary(String name, double salary) {
+        int result = employeePayrollDBService.updateEmployeeData(name,salary);
+        if(result==0)return;
+        EmployeePayrollData employeePayrollData = this.getEmployeePayrollData(name);
+        if(employeePayrollData != null)
+            employeePayrollData.salary = salary;
+    }
+
+    private EmployeePayrollData getEmployeePayrollData(String name) {
+        return employeePayrollList.stream()
+                .filter(employeePayrollDataItem ->employeePayrollDataItem.name.equals(name) )
+                .findFirst()
+                .orElse(null);
+    }
+
+    public boolean checkEmployeePayrollInSyncWithDB(String name) {
+        employeePayrollList = employeePayrollDBService.getEmployeePayrollData(name);
+        return employeePayrollList.get(0).equals(getEmployeePayrollData(name));
     }
 
     /* Write Employee Payroll data to console */

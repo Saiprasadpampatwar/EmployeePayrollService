@@ -1,4 +1,5 @@
 import java.time.LocalDate;
+import java.util.Objects;
 
 public class EmployeePayrollData {
     public int id;
@@ -20,6 +21,17 @@ public class EmployeePayrollData {
     @Override
     public String toString() {
         return "EmployeePayrollData [id=" + id + ", name=" + name + ", salary=" + salary + "]";
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        EmployeePayrollData that = (EmployeePayrollData) o;
+        return id == that.id &&
+                Double.compare(that.salary, salary) == 0 &&
+                Objects.equals(name, that.name) &&
+                Objects.equals(start, that.start);
     }
 
 }
