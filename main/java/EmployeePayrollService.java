@@ -1,5 +1,6 @@
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 
 public class EmployeePayrollService {
@@ -78,6 +79,38 @@ public class EmployeePayrollService {
         return null;
     }
 
+    public Map<String, Double> readAverageSalaryByGender(IOService ioService) {
+        if (ioService.equals(IOService.DB_IO))
+            return employeePayrollDBService.getAverageSalaryByGender();
+        return null;
+    }
+
+
+    public Map<String, Double> readCountByGender(IOService ioService) {
+        if (ioService.equals(IOService.DB_IO))
+            return employeePayrollDBService.getCountByGender();
+        return null;
+    }
+
+    public Map<String, Double> readMinumumSalaryByGender(IOService ioService) {
+        if (ioService.equals(IOService.DB_IO))
+            return employeePayrollDBService.getMinimumByGender();
+        return null;
+    }
+
+
+    public Map<String, Double> readMaximumSalaryByGender(IOService ioService) {
+        if (ioService.equals(IOService.DB_IO))
+            return employeePayrollDBService.getMaximumByGender();
+        return null;
+    }
+
+
+    public Map<String, Double> readSumSalaryByGender(IOService ioService) {
+        if (ioService.equals(IOService.DB_IO))
+            return employeePayrollDBService.getSumOfSalaryByGender();
+        return null;
+    }
 
     /* Write Employee Payroll data to console */
     public void writeEmployeePayrollData(IOService ioService) {
