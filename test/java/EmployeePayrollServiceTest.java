@@ -135,4 +135,12 @@ public class EmployeePayrollServiceTest {
         Assert.assertTrue(averageSalaryByGender.get("M").equals(3450000.00));
         Assert.assertTrue(averageSalaryByGender.get("F").equals(1380000.00) );
     }
+
+    @Test
+    public void givenNewEmployee_whenAddedShouldSyncWithTheDatabaseAccordingToER() throws PayrollServiceException {
+        employeePayrollService.readEmployeePayrollData(EmployeePayrollService.IOService.DB_IO);
+        employeePayrollService.addEmployeeToPayroll(6,"Sai", 4000000.00, LocalDate.now(), "M");
+        boolean result = employeePayrollService.checkEmployeePayrollInSyncWithDB("Sai");
+        Assert.assertTrue(result);
+    }
 }
