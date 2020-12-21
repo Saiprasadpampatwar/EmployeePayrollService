@@ -143,4 +143,12 @@ public class EmployeePayrollServiceTest {
         boolean result = employeePayrollService.checkEmployeePayrollInSyncWithDB("Sai");
         Assert.assertTrue(result);
     }
+
+    @Test
+    public void whenEmployeeRemovedShouldReturn_TrueRecordsOfEmployee() throws PayrollServiceException {
+        employeePayrollService.readEmployeePayrollData(EmployeePayrollService.IOService.DB_IO);
+        employeePayrollService.removeEmployeeFromDB("Mark");
+        int noOfEmployee = employeePayrollService.getNoOfActiveEmployee();
+        Assert.assertEquals(6,noOfEmployee);
+    }
 }

@@ -133,6 +133,16 @@ public class EmployeePayrollService {
         employeePayrollList.add(employeePayrollDBServiceERD.addEmployeeToPayroll(i,name, salary, startDate, gender));
     }
 
+
+    public void removeEmployeeFromDB(String employee_name) throws PayrollServiceException {
+        employeePayrollDBService.removeEmployeeFromDB(employee_name);
+    }
+
+
+    public int getNoOfActiveEmployee() throws PayrollServiceException {
+        return employeePayrollDBService.getNoOfActiveEmployee();
+    }
+
     /* Write Employee Payroll data to console */
     public void writeEmployeePayrollData(IOService ioService) {
         if(ioService.equals(IOService.CONSOLE_IO))
