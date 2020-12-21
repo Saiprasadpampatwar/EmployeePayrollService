@@ -47,7 +47,7 @@ public class EmployeePayrollServiceTest {
     @Test
     public void givenEmployeePayrollinDB_whenRetrieved_ShouldMatch_Employee_Count() throws PayrollServiceException {
         List<EmployeePayrollData> employeePayrollData = employeePayrollService.readEmployeePayrollData(EmployeePayrollService.IOService.DB_IO);
-        Assert.assertEquals(3, employeePayrollData.size());
+        Assert.assertEquals(5, employeePayrollData.size());
     }
 
     @Test
@@ -66,7 +66,7 @@ public class EmployeePayrollServiceTest {
         LocalDate endDate = LocalDate.now();
         List<EmployeePayrollData> employeePayrollData = employeePayrollService
                 .readEmployeePayrollForDateRange(EmployeePayrollService.IOService.DB_IO, startDate, endDate);
-        Assert.assertEquals(3, employeePayrollData.size());
+        Assert.assertEquals(5, employeePayrollData.size());
     }
 
     @Test
@@ -108,5 +108,13 @@ public class EmployeePayrollServiceTest {
         employeePayrollService.readEmployeePayrollData(EmployeePayrollService.IOService.DB_IO);
         Map<String, Double> sumSalaryByGender = employeePayrollService.readSumSalaryByGender(EmployeePayrollService.IOService.DB_IO);
         Assert.assertTrue(sumSalaryByGender.get("M").equals(11000000.00) && sumSalaryByGender.get("F").equals(3000000.00));
+    }
+
+    @Test
+    public void givenNeEmployee_whenAaddedShouldSyncWithTheDatabase() throws PayrollServiceException {
+        employeePayrollService.readEmployeePayrollData(EmployeePayrollService.IOService.DB_IO);
+        employeePayrollService.addEmployeeToPayroll(6,"Sai", 2000000.00, LocalDate.now(), "M");
+        boolean result = employeePayrollService.checkEmployeePayrollInSyncWithDB("Sai");
+        Assert.assertTrue(result);
     }
 }

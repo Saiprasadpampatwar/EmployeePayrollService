@@ -173,4 +173,26 @@ public class EmployeePayrollDBService {
         String sql = "select gender,sum(salary) as SumOfSalary_gender from employee_payroll group by gender";
         return getAggregateByGender("gender","SumOfSalary_gender",sql);
     }
+
+    public EmployeePayrollData addEmployeeToPayroll(int i, String name, double salary, LocalDate startDate, String gender) throws PayrollServiceException {
+       // int employeeId = -1;
+        EmployeePayrollData employeePayrollData = null;
+        String sql = String.format("insert into employee_payroll (id,name,gender,salary,start)"+
+                "values ('%s','%s', '%s', '%s', '%s')", i,name,gender,salary,Date.valueOf(startDate));
+        try (Connection connection = this.getConnection()){
+            Statement statement = connection.createStatement();
+            int rowAffected = statement.executeUpdate(sql, statement.RETURN_GENERATED_KEYS);
+            /*
+            if(rowAffected == 1) {
+                ResultSet resultSet = statement.getGeneratedKeys();
+                if(resultSet.next())
+                    employeeId = resultSet.getInt(1);
+            }
+            */
+            employeePayrollData = new EmployeePayrollData(i, name, salary, startDate);
+        } catch (SQLException e) {
+            throw new PayrollServiceException(e.getMessage(), PayrollServiceException.ExceptionType.INSERTION_PROBLEM);
+        }
+        return employeePayrollData;
+    }
 }

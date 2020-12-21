@@ -112,6 +112,11 @@ public class EmployeePayrollService {
         return null;
     }
 
+
+    public void addEmployeeToPayroll(int i, String name, double salary, LocalDate startDate, String gender) throws PayrollServiceException {
+        employeePayrollList.add(employeePayrollDBService.addEmployeeToPayroll(i,name, salary, startDate, gender));
+    }
+
     /* Write Employee Payroll data to console */
     public void writeEmployeePayrollData(IOService ioService) {
         if(ioService.equals(IOService.CONSOLE_IO))
