@@ -6,6 +6,8 @@ public class EmployeePayrollData {
     public String name;
     public double salary;
     private LocalDate start;
+    private String[] dept_name;
+    private char gender;
 
     public EmployeePayrollData(int id, String name, double salary) {
         this.id = id;
@@ -15,6 +17,12 @@ public class EmployeePayrollData {
     public EmployeePayrollData(int id, String name, double salary, LocalDate start) {
         this(id,name,salary);
         this.start = start;
+    }
+
+    public EmployeePayrollData(int id, String name, double salary, LocalDate startDate, char gender, String[] dept_name) {
+        this(id, name, salary, startDate);
+        this.gender = gender;
+        this.dept_name = dept_name;
     }
 
 

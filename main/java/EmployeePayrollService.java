@@ -8,9 +8,12 @@ public class EmployeePayrollService {
     public enum IOService{CONSOLE_IO,FILE_IO,DB_IO,REST_IO}
 
     private static EmployeePayrollDBService employeePayrollDBService;
+    private EmployeePayrollDBServiceERD employeePayrollDBServiceERD;
+
 
     public EmployeePayrollService(){
         employeePayrollDBService = EmployeePayrollDBService.getInstance();
+        employeePayrollDBServiceERD = EmployeePayrollDBServiceERD.getInstance();
     }
 
     /* Welcome Message */
@@ -114,7 +117,7 @@ public class EmployeePayrollService {
 
 
     public void addEmployeeToPayroll(int i, String name, double salary, LocalDate startDate, String gender) throws PayrollServiceException {
-        employeePayrollList.add(employeePayrollDBService.addEmployeeToPayroll(i,name, salary, startDate, gender));
+        employeePayrollList.add(employeePayrollDBServiceERD.addEmployeeToPayroll(i,name, salary, startDate, gender));
     }
 
     /* Write Employee Payroll data to console */
