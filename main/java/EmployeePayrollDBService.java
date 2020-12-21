@@ -51,6 +51,21 @@ public class EmployeePayrollDBService {
         return employeePayrollList;
     }
 
+    public int readData(String table_name) {
+        int noOfEntries = 0;
+        String sql = String.format("select count(*) from %s",table_name);
+        try(Connection connection = this.getConnection()){
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(sql);
+            while(resultSet.next()) {
+                noOfEntries = resultSet.getInt("count(*)");
+            }
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+        return noOfEntries;
+    }
+
     public List<EmployeePayrollData> getEmployeePayrollData(String name) {
         List<EmployeePayrollData> employeePayrollList = null;
         if(this.employeePayrollDataStatement == null)
@@ -92,18 +107,20 @@ public class EmployeePayrollDBService {
         }
     }
 
-    public int updateEmployeeData(String name, double salary) {
+    public int updateEmployeeData(String name, double salary) throws PayrollServiceException {
         return this.updateEmployeeDataUsingStatement(name, salary);
     }
 
-    private int updateEmployeeDataUsingStatement(String name, double salary) {
+    private int updateEmployeeDataUsingStatement(String name, double salary) throws PayrollServiceException {
         String sql = String.format("update employee_payroll set salary = %.2f where name = '%s';", salary, name);
         try (Connection connection = this.getConnection()) {
             Statement statement = connection.createStatement();
+            this.addPayrollDetailsOfEmployee(name,salary);
             return statement.executeUpdate(sql);
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        this.addPayrollDetailsOfEmployee(name,salary);
         return 0;
 
     }
@@ -136,6 +153,12 @@ public class EmployeePayrollDBService {
     public Map<String, Double> getAverageSalaryByGender() {
         String sql = "select gender,avg(salary) as avg_salary from employee_payroll group by gender";
         return getAggregateByGender("gender","avg_salary",sql);
+    }
+
+
+    public Map<String, Double> getNetSalaryByGender() {
+        String sql = "select e.gender,avg(p.net_pay) as avg_net_pay from employee_payroll e inner join payroll_details p on e.id = p.employee_id group by e.gender";
+        return getAggregateByGender("gender","avg_net_pay",sql);
     }
 
     private Map<String, Double> getAggregateByGender(String gender, String aggregate, String sql) {
@@ -246,5 +269,67 @@ public class EmployeePayrollDBService {
 
 
     }
+
+    public void addPayrollDetailsOfEmployee(String name,double salary) throws PayrollServiceException {
+        int id =0;
+        Connection connection = null;
+        try {
+            connection = this.getConnection();
+            connection.setAutoCommit(false);
+        } catch (SQLException e) {
+            throw new PayrollServiceException(e.getMessage(),
+                    PayrollServiceException.ExceptionType.CONNECTION_PROBLEM);
+        }
+        String sql = String.format("select id from employee_payroll where name = '%s'",name);
+        try (Statement statement = connection.createStatement()){
+            ResultSet result = statement.executeQuery(sql);
+            while (result.next()){
+                 id = result.getInt("id");
+            }
+        }catch (SQLException e) {
+            try {
+                connection.rollback();
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
+            throw new PayrollServiceException(e.getMessage(), PayrollServiceException.ExceptionType.INSERTION_PROBLEM);
+        }
+        try (Statement statement = connection.createStatement()) {
+            double deductions = salary * 0.2;
+            double taxablePay = salary - deductions;
+            double tax = taxablePay * 0.1;
+            double netPay = salary - tax;
+            String sql1 = String.format(
+                    "insert into payroll_details (employee_id, basic_pay, deductions, taxable_pay, tax, net_pay) values "
+                            + "('%s', '%s', '%s', '%s', '%s', '%s')",
+                    id, salary, deductions, taxablePay, tax, netPay);
+            String sql2 = String.format("delete from payroll_details where employee_id = '%s'",id);
+            statement.executeUpdate(sql2);
+            int rowAffected = statement.executeUpdate(sql1);
+        }
+
+        catch (SQLException e) {
+            try {
+                connection.rollback();
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
+            throw new PayrollServiceException(e.getMessage(), PayrollServiceException.ExceptionType.INSERTION_PROBLEM);
+        }
+        try {
+            connection.commit();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            if (connection != null)
+                try {
+                    connection.close();
+                } catch (SQLException e) {
+                    throw new PayrollServiceException(e.getMessage(),
+                            PayrollServiceException.ExceptionType.CONNECTION_PROBLEM);
+                }
+        }
+    }
+
 
 }

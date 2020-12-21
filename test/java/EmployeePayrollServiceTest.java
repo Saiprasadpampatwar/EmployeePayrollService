@@ -53,7 +53,7 @@ public class EmployeePayrollServiceTest {
     @Test
     public void givenNewSalary_ForEmployee_ShouldSinc_withDtabase() throws PayrollServiceException {
         List<EmployeePayrollData> employeePayrollData = employeePayrollService.readEmployeePayrollData(EmployeePayrollService.IOService.DB_IO);
-        employeePayrollService.upDateEmployeeSalary("Mark",3000000.0);
+        employeePayrollService.upDateEmployeeSalary("Mark",2000000.0);
         boolean result = employeePayrollService.checkEmployeePayrollInSyncWithDB("Mark");
         Assert.assertTrue(result);
     }
@@ -109,12 +109,30 @@ public class EmployeePayrollServiceTest {
         Map<String, Double> sumSalaryByGender = employeePayrollService.readSumSalaryByGender(EmployeePayrollService.IOService.DB_IO);
         Assert.assertTrue(sumSalaryByGender.get("M").equals(11000000.00) && sumSalaryByGender.get("F").equals(3000000.00));
     }
+    
+    @Test
+    public void givenNewEmployee_whenAddedShouldSyncWithTheDatabase() throws PayrollServiceException {
+        employeePayrollService.readEmployeePayrollData(EmployeePayrollService.IOService.DB_IO);
+        employeePayrollService.addEmployeeToPayroll(7,"Ansh", 5000000.00, LocalDate.now(), "M");
+        boolean result = employeePayrollService.checkEmployeePayrollInSyncWithDB("Ansh");
+        Assert.assertTrue(result);
+    }
 
     @Test
-    public void givenNeEmployee_whenAaddedShouldSyncWithTheDatabase() throws PayrollServiceException {
+    public void retriveEntriesFromDifferentTables() throws PayrollServiceException {
         employeePayrollService.readEmployeePayrollData(EmployeePayrollService.IOService.DB_IO);
-        employeePayrollService.addEmployeeToPayroll(6,"Sai", 2000000.00, LocalDate.now(), "M");
-        boolean result = employeePayrollService.checkEmployeePayrollInSyncWithDB("Sai");
-        Assert.assertTrue(result);
+        int noOfEntries = employeePayrollService.readEmployeePayrollData(EmployeePayrollService.IOService.DB_IO,"employee_payroll");
+        Assert.assertEquals(6, noOfEntries);
+        int noOfEntries1 = employeePayrollService.readEmployeePayrollData(EmployeePayrollService.IOService.DB_IO,"payroll_details");
+        Assert.assertEquals(6, noOfEntries1);
+    }
+
+    @Test
+    public void givenPayrollData_whenNet_PayRetrievedByGender_shouldReturnProperValue()
+            throws PayrollServiceException {
+        employeePayrollService.readEmployeePayrollData(EmployeePayrollService.IOService.DB_IO);
+        Map<String, Double> averageSalaryByGender = employeePayrollService.readNetSalaryByGender(EmployeePayrollService.IOService.DB_IO);
+        Assert.assertTrue(averageSalaryByGender.get("M").equals(3450000.00));
+        Assert.assertTrue(averageSalaryByGender.get("F").equals(1380000.00) );
     }
 }

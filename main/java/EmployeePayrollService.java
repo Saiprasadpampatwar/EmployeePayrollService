@@ -55,7 +55,15 @@ public class EmployeePayrollService {
         return employeePayrollList;
     }
 
-    public void upDateEmployeeSalary(String name, double salary) {
+    public int readEmployeePayrollData(IOService ioService, String employee_payroll) throws PayrollServiceException {
+        int noOfEntries = 0;
+        if(ioService.equals(IOService.DB_IO))
+            noOfEntries =  employeePayrollDBService.readData(employee_payroll);
+        return noOfEntries;
+    }
+
+
+    public void upDateEmployeeSalary(String name, double salary) throws PayrollServiceException {
         int result = employeePayrollDBService.updateEmployeeData(name,salary);
         if(result==0)return;
         EmployeePayrollData employeePayrollData = this.getEmployeePayrollData(name);
@@ -88,6 +96,11 @@ public class EmployeePayrollService {
         return null;
     }
 
+    public Map<String, Double> readNetSalaryByGender(IOService ioService) {
+        if (ioService.equals(IOService.DB_IO))
+            return employeePayrollDBService.getNetSalaryByGender();
+        return null;
+    }
 
     public Map<String, Double> readCountByGender(IOService ioService) {
         if (ioService.equals(IOService.DB_IO))
