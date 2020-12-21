@@ -179,6 +179,7 @@ public class EmployeePayrollDBService {
         Connection connection = null;
         try {
             connection = this.getConnection();
+            connection.setAutoCommit(false);
         } catch (SQLException e) {
             throw new PayrollServiceException(e.getMessage(),
                     PayrollServiceException.ExceptionType.CONNECTION_PROBLEM);
@@ -198,6 +199,11 @@ public class EmployeePayrollDBService {
             */
             employeePayrollData = new EmployeePayrollData(i, name, salary, startDate);
         } catch (SQLException e) {
+            try {
+                connection.rollback();
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
             throw new PayrollServiceException(e.getMessage(), PayrollServiceException.ExceptionType.INSERTION_PROBLEM);
         }
 
@@ -215,8 +221,30 @@ public class EmployeePayrollDBService {
                 employeePayrollData = new EmployeePayrollData(i, name, salary, startDate);
             }
         } catch (SQLException e) {
+            try {
+                connection.rollback();
+                return employeePayrollData;
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
+            throw new PayrollServiceException(e.getMessage(), PayrollServiceException.ExceptionType.INSERTION_PROBLEM);
+        }
+        try {
+            connection.commit();
+        } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            if (connection != null)
+                try {
+                    connection.close();
+                } catch (SQLException e) {
+                    throw new PayrollServiceException(e.getMessage(),
+                            PayrollServiceException.ExceptionType.CONNECTION_PROBLEM);
+                }
         }
         return employeePayrollData;
+
+
     }
+
 }
