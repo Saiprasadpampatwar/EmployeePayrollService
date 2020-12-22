@@ -2,7 +2,10 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import java.time.Duration;
+import java.time.Instant;
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -113,7 +116,7 @@ public class EmployeePayrollServiceTest {
     @Test
     public void givenNewEmployee_whenAddedShouldSyncWithTheDatabase() throws PayrollServiceException {
         employeePayrollService.readEmployeePayrollData(EmployeePayrollService.IOService.DB_IO);
-        employeePayrollService.addEmployeeToPayroll(7,"Ansh", 5000000.00, LocalDate.now(), "M");
+        employeePayrollService.addEmployeeToPayroll(7,"Ansh", 5000000.00, LocalDate.now(), 'M');
         boolean result = employeePayrollService.checkEmployeePayrollInSyncWithDB("Ansh");
         Assert.assertTrue(result);
     }
@@ -139,7 +142,7 @@ public class EmployeePayrollServiceTest {
     @Test
     public void givenNewEmployee_whenAddedShouldSyncWithTheDatabaseAccordingToER() throws PayrollServiceException {
         employeePayrollService.readEmployeePayrollData(EmployeePayrollService.IOService.DB_IO);
-        employeePayrollService.addEmployeeToPayroll(6,"Sai", 4000000.00, LocalDate.now(), "M");
+        employeePayrollService.addEmployeeToPayroll(6,"Sai", 4000000.00, LocalDate.now(), 'M');
         boolean result = employeePayrollService.checkEmployeePayrollInSyncWithDB("Sai");
         Assert.assertTrue(result);
     }
@@ -150,5 +153,21 @@ public class EmployeePayrollServiceTest {
         employeePayrollService.removeEmployeeFromDB("Mark");
         int noOfEmployee = employeePayrollService.getNoOfActiveEmployee();
         Assert.assertEquals(6,noOfEmployee);
+    }
+
+    @Test
+    public void given6Employees_whenAddedToDB_shouldMatchEmployeeEntries() throws PayrollServiceException {
+        EmployeePayrollData[] arrayOfEmps = {
+                new EmployeePayrollData(8, "Bill Gates", 500000.0, LocalDate.now(), 'M'),
+                new EmployeePayrollData(9, "Mark Zuckerberg", 400000.0, LocalDate.now(), 'M'),
+                new EmployeePayrollData(10, "Sunder Pichai", 300000.0, LocalDate.now(), 'M'),
+                new EmployeePayrollData(11, "Mukesh Ambani", 200000.0, LocalDate.now(), 'M'),
+                new EmployeePayrollData(12, "Anil Ambani", 100000.0, LocalDate.now(), 'M') };
+        employeePayrollService.readEmployeePayrollData(EmployeePayrollService.IOService.DB_IO);
+        Instant start = Instant.now();
+        employeePayrollService.addEmployeesToPayroll(Arrays.asList(arrayOfEmps));
+        Instant end = Instant.now();
+        System.out.println("Duration without Thread; " + Duration.between(start, end));
+        Assert.assertEquals(13, employeePayrollService.countEntries(EmployeePayrollService.IOService.DB_IO));
     }
 }

@@ -14,7 +14,7 @@ public class EmployeePayrollDBServiceERD {
         return employeePayrollDBServiceERD;
     }
 
-    public EmployeePayrollData addEmployeeToPayroll(int i, String name, double salary, LocalDate startDate, String gender) throws PayrollServiceException {
+    public EmployeePayrollData addEmployeeToPayroll(int i, String name, double salary, LocalDate startDate, char gender) throws PayrollServiceException {
 
         Connection connection = null;
         EmployeePayrollData employeePayrollData = null;
