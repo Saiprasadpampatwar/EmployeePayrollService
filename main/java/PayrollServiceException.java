@@ -1,7 +1,7 @@
 public class PayrollServiceException extends Exception {
     enum ExceptionType{
         CONNECTION_PROBLEM, RETRIEVAL_PROBLEM,
-        INSERTION_PROBLEM;
+        INSERTION_PROBLEM,UPDATE_PROBLEM;
     }
 
     ExceptionType type;

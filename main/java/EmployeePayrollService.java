@@ -1,4 +1,5 @@
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
@@ -145,6 +146,35 @@ public class EmployeePayrollService {
             }
             System.out.println(this.employeePayrollList);
         });
+    }
+
+
+    public void addEmployeesToPayrollWithThreads(List<EmployeePayrollData> employeePayrollDataList) {
+        Map<Integer, Boolean> employeeAdditionStatus = new HashMap<Integer, Boolean>();
+        employeePayrollDataList.forEach(employeePayrollData -> {
+            Runnable task = () -> {
+                employeeAdditionStatus.put(employeePayrollData.hashCode(), false);
+                System.out.println("Employee Being Added: " + Thread.currentThread().getName());
+                try {
+                    this.addEmployeeToPayroll(employeePayrollData.id,employeePayrollData.name, employeePayrollData.salary,
+                            employeePayrollData.start, employeePayrollData.gender);
+                } catch (PayrollServiceException e) {
+                    e.printStackTrace();
+                }
+                employeeAdditionStatus.put(employeePayrollData.hashCode(), true);
+                System.out.println("Employee Added " + Thread.currentThread().getName());
+            };
+            Thread thread = new Thread(task, employeePayrollData.name);
+            thread.start();
+        });
+        while(employeeAdditionStatus.containsValue(false)) {
+            try {
+                Thread.sleep(10);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        System.out.println(employeePayrollDataList);
     }
 
 
