@@ -6,6 +6,7 @@ import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -181,5 +182,15 @@ public class EmployeePayrollServiceTest {
         employeePayrollService.addEmployeeToPayroll(13,"Sainath", 5000000.00, LocalDate.now(), 'M');
         boolean result = employeePayrollService.checkEmployeePayrollInSyncWithDB("Sainath");
         Assert.assertTrue(result);
+    }
+
+    @Test
+    public void updateSalaryOfMultipleEmployeeShouldMatchWithValueInDB() throws PayrollServiceException {
+        employeePayrollService.readEmployeePayrollData(EmployeePayrollService.IOService.DB_IO);
+        Map<String,Double> myMap = new HashMap<>();
+        myMap.put("Anjali",3000000.00);
+        myMap.put("Sai",6000000.00);
+        employeePayrollService.updateMultipleEmployeeSalaryWithThreads(myMap);
+        Assert.assertEquals(14, employeePayrollService.countEntries(EmployeePayrollService.IOService.DB_IO));
     }
 }

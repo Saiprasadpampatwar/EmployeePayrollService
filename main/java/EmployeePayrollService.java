@@ -72,6 +72,43 @@ public class EmployeePayrollService {
             employeePayrollData.salary = salary;
     }
 
+
+    public void updateMultipleEmployeeSalaryWithThreads(Map<String, Double> myMap) {
+        myMap.entrySet().forEach(m-> {
+            try {
+                this.upDateEmployeeSalary(m.getKey(),m.getValue());
+            } catch (PayrollServiceException e) {
+                e.printStackTrace();
+            }
+        });
+        /*
+        Map<Integer, Boolean> salaryUpdateStatus = new HashMap<Integer, Boolean>();
+        for(Map.Entry<String,Double> ele: myMap.entrySet()) {
+            Runnable task = () -> {
+                salaryUpdateStatus.put(ele.hashCode(), false);
+                System.out.println("updating salary of  " + Thread.currentThread().getName());
+                try {
+                    this.upDateEmployeeSalary(ele.getKey(), ele.getValue());
+                } catch (PayrollServiceException e) {
+                    e.printStackTrace();
+                }
+                salaryUpdateStatus.put(ele.hashCode(), true);
+                System.out.println("salary updated  " + Thread.currentThread().getName());
+            };
+            Thread thread = new Thread(task, ele.getKey());
+            thread.start();
+        }
+        while(salaryUpdateStatus.containsValue(false)) {
+            try {
+                Thread.sleep(10);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        System.out.println(myMap);*/
+    }
+
+
     private EmployeePayrollData getEmployeePayrollData(String name) {
         return employeePayrollList.stream()
                 .filter(employeePayrollDataItem ->employeePayrollDataItem.name.equals(name) )

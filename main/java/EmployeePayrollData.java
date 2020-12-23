@@ -9,10 +9,14 @@ public class EmployeePayrollData {
     private String[] dept_name;
     public char gender;
 
-    public EmployeePayrollData(int id, String name, double salary) {
-        this.id = id;
+    public EmployeePayrollData(String name, double salary){
         this.name = name;
         this.salary = salary;
+    }
+
+    public EmployeePayrollData(int id, String name, double salary) {
+        this(name,salary);
+        this.id = id;
     }
     public EmployeePayrollData(int id, String name, double salary, LocalDate start) {
         this(id,name,salary);
