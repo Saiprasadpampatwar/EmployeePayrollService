@@ -174,4 +174,12 @@ public class EmployeePayrollServiceTest {
         System.out.println("Duration with Thread; " + Duration.between(threadStart, threadEnd));
         Assert.assertEquals(13, employeePayrollService.countEntries(EmployeePayrollService.IOService.DB_IO));
     }
+
+    @Test
+    public void givenNewEmployee_whenAddedShouldSyncWithTheDatabaseAccordingToERWithThreads() throws PayrollServiceException {
+        employeePayrollService.readEmployeePayrollData(EmployeePayrollService.IOService.DB_IO);
+        employeePayrollService.addEmployeeToPayroll(13,"Sainath", 5000000.00, LocalDate.now(), 'M');
+        boolean result = employeePayrollService.checkEmployeePayrollInSyncWithDB("Sainath");
+        Assert.assertTrue(result);
+    }
 }
