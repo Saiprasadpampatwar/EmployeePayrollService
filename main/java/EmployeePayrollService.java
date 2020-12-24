@@ -246,6 +246,8 @@ public class EmployeePayrollService {
             return new EmployeePayrollFileIOService().countEntries();
         }else if(fileIo.equals(IOService.DB_IO)){
             return employeePayrollList.size();
+        }else if(fileIo.equals(IOService.REST_IO)){
+            return employeePayrollList.size();
         }
         return 0;
     }
