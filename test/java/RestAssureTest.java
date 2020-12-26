@@ -67,6 +67,6 @@ public class RestAssureTest {
         RequestSpecification request = RestAssured.given();
         request.header("Content-Type", "application/json");
         request.body(employeeJson);
-        return request.post("/employees");
+        return request.post("/employeePayrollData");
     }
 }
